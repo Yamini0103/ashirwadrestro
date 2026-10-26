@@ -9,9 +9,12 @@ import jamun from "@/assets/jamun.jpg";
 import interior1 from "@/assets/img5137.jpg.asset.json";
 import interior2 from "@/assets/img5138.jpg.asset.json";
 import exterior from "@/assets/img5141.jpg.asset.json";
+import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from "@/data/restaurant";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ArrowUpRight, Phone } from "lucide-react";
 
-export const PHONE = "+910000000000"; // TODO: replace with real number
-const MAP_Q = "Aashirwad Restaurant, 8 Navlakha Rd, Janki Nagar, Indore 452001";
+const MAP_Q = "ASHIRWAD Restaurant, 8 Navlakha Rd, Janki Nagar, Indore 452001";
 
 const btn = "inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold transition-all";
 const btnPrimary = `${btn} bg-gradient-primary text-primary-foreground shadow-glow hover:brightness-110`;
@@ -73,7 +76,7 @@ export function Navbar() {
     <>
       <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "glass border-b py-3" : "py-6"}`}>
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5">
-          <a href="#home" className="font-display text-2xl font-bold"><span className="text-gradient">Aashirwad</span></a>
+          <a href="#home" className="font-display text-2xl font-bold"><span className="text-gradient">ASHIRWAD</span></a>
           <div className="hidden gap-8 text-sm lg:flex">
             {links.map((l) => <a key={l} href={`#${l.toLowerCase()}`} className="text-muted-foreground transition hover:text-primary">{l}</a>)}
           </div>
@@ -122,7 +125,7 @@ export function Hero() {
           <span className="glass rounded-full border px-4 py-2">★ 3.6 · 407 reviews</span>
         </motion.div>
         <h1 className="font-display text-[15vw] font-bold leading-[0.85] md:text-[9vw]" style={{ perspective: 600 }}>
-          <SplitText text="Aashirwad" className="text-gradient block" delay={2.2} />
+          <SplitText text="ASHIRWAD" className="text-gradient block" delay={2.2} />
           <SplitText text="Restaurant" className="block" delay={2.5} />
         </h1>
         <Reveal delay={2.9}>
@@ -166,11 +169,11 @@ export function About() {
             <div>
               <p className={eyebrow}>Our Story</p>
               <p className="font-display text-3xl leading-tight md:text-5xl">
-                <ScrollWords progress={scrollYProgress} text="On Navlakha Road, Aashirwad serves Indore royal North Indian vegetarian food — slow-cooked gravies, tandoor-kissed paneer and soft butter chapatis, in a dining hall of blue velvet, warm wood and green leaves." />
+                <ScrollWords progress={scrollYProgress} text="On Navlakha Road, ASHIRWAD serves Indore royal North Indian vegetarian food — slow-cooked gravies, tandoor-kissed paneer and soft butter chapatis, in a dining hall of blue velvet, warm wood and green leaves." />
               </p>
             </div>
             <motion.div style={{ scale: imgScale, rotate: imgR, clipPath: clip }} className="relative aspect-[4/5] overflow-hidden shadow-glow">
-              <img src={interior2.url} alt="Aashirwad dining hall with blue sofas and wooden pillars" className="h-full w-full object-cover" />
+              <img src={interior2.url} alt="ASHIRWAD dining hall with blue sofas and wooden pillars" className="h-full w-full object-cover" />
             </motion.div>
           </div>
         </div>
@@ -187,7 +190,7 @@ export function About() {
   );
 }
 
-/* ---------- Specials (horizontal scroll) ---------- */
+/* ---------- Specials ---------- */
 const specials = [
   { n: "Paneer Tikka Dry", p: "₹180", img: tikka },
   { n: "Shahi Paneer", p: "₹170", img: hero },
@@ -197,29 +200,41 @@ const specials = [
   { n: "Gulab Jamun", p: "₹45 · 2pcs", img: jamun },
 ];
 export function Specials() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-72%"]);
   return (
-    <section id="specials" ref={ref} className="relative h-[350vh]">
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <div className="mx-auto mb-10 w-full max-w-7xl px-5">
+    <section id="specials" className="scroll-mt-24 py-24">
+      <div className="mx-auto max-w-7xl px-5">
+        <div className="mb-10">
           <p className={eyebrow}>Signature Specials</p>
           <h2 className={h2}>Plates worth <span className="text-gradient italic">a pilgrimage.</span></h2>
         </div>
-        <motion.div style={{ x }} className="flex gap-6 pl-5 md:pl-[max(1.25rem,calc((100vw-80rem)/2+1.25rem))]">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {specials.map((s) => (
-            <Tilt key={s.n} className="group relative h-[52vh] w-[75vw] shrink-0 overflow-hidden rounded-3xl border md:w-[30vw]">
-              <img src={s.img} alt={s.n} loading="lazy" data-hover className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" />
-              <div className="bg-overlay absolute inset-0" />
-              <div className="absolute inset-x-0 bottom-0 p-6">
-                <span className="mb-2 inline-block rounded-full border border-success/50 px-2 py-0.5 text-[10px] font-bold uppercase text-success">Veg</span>
-                <h3 className="font-display text-3xl font-semibold">{s.n}</h3>
-                <p className="mt-1 font-semibold text-primary">{s.p}</p>
-              </div>
-            </Tilt>
+            <Dialog key={s.n}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" aria-label={`Open ${s.n}`} className="group h-auto w-full flex-col items-stretch gap-0 overflow-hidden whitespace-normal rounded-lg border bg-card p-0 text-left text-foreground transition hover:border-primary focus-visible:ring-primary">
+                  <span className="block aspect-[4/3] w-full overflow-hidden">
+                    <img src={s.img} alt={s.n} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none" />
+                  </span>
+                  <span className="flex w-full items-start justify-between gap-3 p-5">
+                    <span className="min-w-0">
+                      <span className="mb-2 block text-xs font-bold uppercase text-success">Pure Veg</span>
+                      <span className="block font-display text-3xl font-semibold leading-tight">{s.n}</span>
+                      <span className="mt-2 block text-sm font-semibold text-primary">{s.p}</span>
+                    </span>
+                    <ArrowUpRight className="mt-1 shrink-0 text-primary" aria-hidden="true" />
+                  </span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent data-lenis-prevent className="max-h-[85svh] w-[calc(100%-2rem)] overflow-y-auto rounded-lg border-primary/40 p-5">
+                <DialogTitle className="pr-8 font-display text-3xl leading-tight">{s.n}</DialogTitle>
+                <DialogDescription>Signature Special · Pure Veg</DialogDescription>
+                <img src={s.img} alt={s.n} className="aspect-[4/3] w-full rounded-lg object-cover" />
+                <p className="text-lg font-semibold text-primary">{s.p}</p>
+                <Button asChild><a href={`tel:${PHONE}`}><Phone aria-hidden="true" />{PHONE_DISPLAY}</a></Button>
+              </DialogContent>
+            </Dialog>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -307,7 +322,7 @@ export function Thali() {
 /* ---------- Gallery ---------- */
 export function Gallery() {
   const photos = [
-    { src: exterior.url, alt: "Aashirwad Restaurant storefront on Navlakha Road" },
+    { src: exterior.url, alt: "ASHIRWAD Restaurant storefront on Navlakha Road" },
     { src: interior1.url, alt: "Dining hall with blue sofas" },
     { src: thali, alt: "Thali" },
     { src: interior2.url, alt: "Dining hall with hanging plants" },
@@ -395,7 +410,7 @@ export function Contact() {
   const [sent, setSent] = useState(false);
   const cards = [
     ["Address", "8, Navlakha Rd, near Dena Bank Navlakha Branch, Janki Nagar, Indore, MP 452001"],
-    ["Phone", "Call or WhatsApp us"],
+    ["Phone", PHONE_DISPLAY],
     ["Email", "sharmabhanu517@gmail.com"],
     ["Hours", "Open daily · 11 AM – 11 PM"],
   ];
@@ -410,7 +425,7 @@ export function Contact() {
           <div className="flex flex-wrap gap-3">
             <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(MAP_Q)}`} target="_blank" rel="noreferrer" className={btnPrimary}>Get Directions</a>
             <a href={`tel:${PHONE}`} className={btnGhost}>Call</a>
-            <a href={`https://wa.me/${PHONE.replace("+", "")}`} target="_blank" rel="noreferrer" className={btnGhost}>WhatsApp</a>
+            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className={btnGhost}>WhatsApp</a>
           </div>
           <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="space-y-3 rounded-3xl border bg-card p-6">
             <AnimatePresence mode="wait">
@@ -445,11 +460,11 @@ export function Footer() {
   return (
     <footer ref={ref} className="border-t px-5 pb-28 pt-16 md:pb-10">
       <div className="relative mx-auto max-w-7xl select-none font-display text-[17vw] font-bold leading-none">
-        <span className="text-outline">AASHIRWAD</span>
-        <motion.span style={{ clipPath: fill }} className="text-gradient absolute inset-0">AASHIRWAD</motion.span>
+        <span className="text-outline">ASHIRWAD</span>
+        <motion.span style={{ clipPath: fill }} className="text-gradient absolute inset-0">ASHIRWAD</motion.span>
       </div>
       <div className="mx-auto mt-10 flex max-w-7xl flex-wrap justify-between gap-6 text-sm text-muted-foreground">
-        <p>Pure Veg. Pure Royal. Pure Aashirwad.</p>
+        <p>Pure Veg. Pure Royal. Pure ASHIRWAD.</p>
         <div className="flex gap-5">{links.map((l) => <a key={l} href={`#${l.toLowerCase()}`} className="hover:text-primary">{l}</a>)}</div>
         <p>Made with ❤️ in Indore</p>
       </div>
@@ -461,7 +476,7 @@ export function MobileBar() {
   return (
     <div className="glass fixed inset-x-3 bottom-3 z-40 flex gap-2 rounded-full border p-2 md:hidden">
       <a href={`tel:${PHONE}`} className={`${btnPrimary} flex-1 justify-center !py-3`}>Call Now</a>
-      <a href={`https://wa.me/${PHONE.replace("+", "")}`} className={`${btnGhost} flex-1 justify-center !py-3`}>WhatsApp</a>
+      <a href={WHATSAPP_URL} className={`${btnGhost} flex-1 justify-center !py-3`}>WhatsApp</a>
     </div>
   );
 }
