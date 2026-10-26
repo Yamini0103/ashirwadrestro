@@ -79,7 +79,7 @@ export function Navbar() {
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <a href={`tel:${PHONE}`} className={`${btnPrimary} hidden !py-2.5 md:inline-flex`}>Call Now</a>
+            <span className="hidden md:block"><a href={`tel:${PHONE}`} className={`${btnPrimary} !py-2.5`}>Call Now</a></span>
             <button onClick={() => setOpen(!open)} aria-label="Menu" className="grid h-10 w-10 place-items-center lg:hidden">
               <span className={`block h-0.5 w-6 bg-foreground transition ${open ? "translate-y-[3px] rotate-45" : "-translate-y-1"}`} />
               <span className={`block h-0.5 w-6 bg-foreground transition ${open ? "-translate-y-[3px] -rotate-45" : "translate-y-1"}`} />
