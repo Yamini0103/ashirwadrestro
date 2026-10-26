@@ -98,7 +98,7 @@ export function Counter({ to, suffix = "", decimals = 0 }: { to: number; suffix?
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
+      if (!e?.isIntersecting) return;
       io.disconnect();
       const t0 = performance.now();
       const tick = (t: number) => { const p = Math.min((t - t0) / 1600, 1); setV(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(tick); };
