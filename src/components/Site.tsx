@@ -1,0 +1,467 @@
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Counter, Embers, Magnetic, Reveal, ScrollWords, SplitText, Tilt } from "./motion";
+import { menu } from "@/data/menu";
+import hero from "@/assets/hero.jpg";
+import tikka from "@/assets/tikka.jpg";
+import thali from "@/assets/thali.jpg";
+import jamun from "@/assets/jamun.jpg";
+import interior1 from "@/assets/img5137.jpg.asset.json";
+import interior2 from "@/assets/img5138.jpg.asset.json";
+import exterior from "@/assets/img5141.jpg.asset.json";
+
+export const PHONE = "+910000000000"; // TODO: replace with real number
+const MAP_Q = "Aashirwad Restaurant, 8 Navlakha Rd, Janki Nagar, Indore 452001";
+
+const btn = "inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold transition-all";
+const btnPrimary = `${btn} bg-gradient-primary text-primary-foreground shadow-glow hover:brightness-110`;
+const btnGhost = `${btn} border border-primary/60 text-foreground hover:bg-primary/10`;
+const h2 = "font-display text-5xl font-semibold leading-[0.95] md:text-7xl";
+const eyebrow = "mb-4 text-xs font-bold uppercase tracking-[0.35em] text-primary";
+
+/* ---------- Preloader: palace doors ---------- */
+export function Preloader() {
+  const [done, setDone] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setDone(true), 2200); return () => clearTimeout(t); }, []);
+  return (
+    <AnimatePresence>
+      {!done && (
+        <motion.div className="fixed inset-0 z-[100] flex" exit={{ pointerEvents: "none" }}>
+          {[0, 1].map((i) => (
+            <motion.div key={i} className="h-full w-1/2 bg-background border-primary/40"
+              style={{ borderRightWidth: i === 0 ? 1 : 0 }}
+              exit={{ x: i === 0 ? "-100%" : "100%" }} transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }} />
+          ))}
+          <motion.svg exit={{ opacity: 0, scale: 0.8 }} viewBox="0 0 100 100" className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 text-primary">
+            <motion.path d="M50 8 L88 92 H12 Z M30 64 H70" fill="none" stroke="currentColor" strokeWidth="3"
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.6, ease: "easeInOut" }} />
+          </motion.svg>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ---------- Theme toggle with ripple reveal ---------- */
+function ThemeToggle() {
+  const [day, setDay] = useState(false);
+  useEffect(() => { const d = localStorage.getItem("theme") === "day"; setDay(d); document.documentElement.classList.toggle("day", d); }, []);
+  const flip = (e: React.MouseEvent) => {
+    const next = !day;
+    const apply = () => { document.documentElement.classList.toggle("day", next); setDay(next); localStorage.setItem("theme", next ? "day" : "night"); };
+    const d = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
+    if (!d.startViewTransition) return apply();
+    const r = Math.hypot(Math.max(e.clientX, innerWidth - e.clientX), Math.max(e.clientY, innerHeight - e.clientY));
+    d.startViewTransition(apply).ready.then(() =>
+      document.documentElement.animate({ clipPath: [`circle(0 at ${e.clientX}px ${e.clientY}px)`, `circle(${r}px at ${e.clientX}px ${e.clientY}px)`] },
+        { duration: 700, easing: "cubic-bezier(.7,0,.3,1)", pseudoElement: "::view-transition-new(root)" }));
+  };
+  return (
+    <button onClick={flip} aria-label="Toggle day / night" className="relative grid h-10 w-10 place-items-center rounded-full border border-primary/50 text-primary">
+      <motion.span key={String(day)} initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} className="text-lg">{day ? "☀" : "☾"}</motion.span>
+    </button>
+  );
+}
+
+/* ---------- Navbar ---------- */
+const links = ["About", "Specials", "Menu", "Gallery", "Reviews", "Contact"];
+export function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  useEffect(() => { const f = () => setScrolled(scrollY > 40); addEventListener("scroll", f); return () => removeEventListener("scroll", f); }, []);
+  return (
+    <>
+      <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "glass border-b py-3" : "py-6"}`}>
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-5">
+          <a href="#home" className="font-display text-2xl font-bold"><span className="text-gradient">Aashirwad</span></a>
+          <div className="hidden gap-8 text-sm lg:flex">
+            {links.map((l) => <a key={l} href={`#${l.toLowerCase()}`} className="text-muted-foreground transition hover:text-primary">{l}</a>)}
+          </div>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <span className="hidden md:block"><a href={`tel:${PHONE}`} className={`${btnPrimary} !py-2.5`}>Call Now</a></span>
+            <button onClick={() => setOpen(!open)} aria-label="Menu" className="grid h-10 w-10 place-items-center lg:hidden">
+              <span className={`block h-0.5 w-6 bg-foreground transition ${open ? "translate-y-[3px] rotate-45" : "-translate-y-1"}`} />
+              <span className={`block h-0.5 w-6 bg-foreground transition ${open ? "-translate-y-[3px] -rotate-45" : "translate-y-1"}`} />
+            </button>
+          </div>
+        </nav>
+      </header>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ clipPath: "circle(0% at 90% 4%)" }} animate={{ clipPath: "circle(150% at 90% 4%)" }} exit={{ clipPath: "circle(0% at 90% 4%)" }}
+            transition={{ duration: 0.6 }} className="fixed inset-0 z-40 flex flex-col justify-center gap-4 bg-background px-8">
+            {links.map((l, i) => (
+              <motion.a key={l} href={`#${l.toLowerCase()}`} onClick={() => setOpen(false)} initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 + i * 0.06 }} className="font-display text-5xl font-semibold hover:text-primary">{l}</motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+/* ---------- Hero ---------- */
+export function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1.05, 1.4]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 8]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const op = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  return (
+    <section id="home" ref={ref} className="relative flex min-h-[100svh] items-end overflow-hidden pb-24">
+      <motion.img src={hero} alt="Shahi paneer in a brass handi over glowing embers" width={1536} height={1024}
+        style={{ scale, rotate }} className="absolute inset-0 h-full w-full object-cover" />
+      <div className="bg-overlay absolute inset-0" />
+      <Embers />
+      <motion.div style={{ y, opacity: op }} className="relative mx-auto w-full max-w-7xl px-5">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} className="mb-6 flex flex-wrap gap-3 text-xs">
+          <span className="glass flex items-center gap-2 rounded-full border px-4 py-2"><span className="h-2 w-2 animate-pulse rounded-full bg-success" />Open Now</span>
+          <span className="glass rounded-full border px-4 py-2">★ 3.6 · 407 reviews</span>
+        </motion.div>
+        <h1 className="font-display text-[15vw] font-bold leading-[0.85] md:text-[9vw]" style={{ perspective: 600 }}>
+          <SplitText text="Aashirwad" className="text-gradient block" delay={2.2} />
+          <SplitText text="Restaurant" className="block" delay={2.5} />
+        </h1>
+        <Reveal delay={2.9}>
+          <p className="mt-6 max-w-md text-lg text-muted-foreground">Pure Veg • North Indian • Indore<br /><em className="font-display text-2xl text-foreground">“Swaad Jo Dil Ko Chhu Jaaye”</em></p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Magnetic><a href="#menu" className={btnPrimary}>Explore Menu →</a></Magnetic>
+            <Magnetic><a href={`tel:${PHONE}`} className={btnGhost}>Call Now</a></Magnetic>
+          </div>
+        </Reveal>
+      </motion.div>
+      <div className="absolute bottom-6 left-1/2 hidden h-10 w-6 -translate-x-1/2 rounded-full border-2 border-muted-foreground md:block">
+        <motion.span animate={{ y: [4, 16, 4] }} transition={{ repeat: Infinity, duration: 1.6 }} className="mx-auto mt-1 block h-2 w-1 rounded-full bg-primary" />
+      </div>
+    </section>
+  );
+}
+
+export function Marquee() {
+  const names = "Paneer Tikka · Shahi Paneer · Kaju Curry · Hara Bhara Kabab · Gulab Jamun · Crispy Corn · Chola Batura · Dal Thali · ";
+  return (
+    <div className="overflow-hidden border-y py-6">
+      <div className="animate-marquee flex w-max whitespace-nowrap font-display text-4xl italic md:text-6xl">
+        <span className="pr-8">{names.repeat(2)}</span><span className="text-outline pr-8">{names.repeat(2)}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- About (pinned) ---------- */
+export function About() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const imgScale = useTransform(scrollYProgress, [0, 1], [0.8, 1.05]);
+  const imgR = useTransform(scrollYProgress, [0, 1], [-6, 4]);
+  const clip = useTransform(scrollYProgress, [0, 0.5], ["inset(20% 20% 20% 20% round 32px)", "inset(0% 0% 0% 0% round 32px)"]);
+  return (
+    <section id="about">
+      <div ref={ref} className="relative h-[250vh]">
+        <div className="sticky top-0 flex min-h-screen items-center">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 md:grid-cols-2">
+            <div>
+              <p className={eyebrow}>Our Story</p>
+              <p className="font-display text-3xl leading-tight md:text-5xl">
+                <ScrollWords progress={scrollYProgress} text="On Navlakha Road, Aashirwad serves Indore royal North Indian vegetarian food — slow-cooked gravies, tandoor-kissed paneer and soft butter chapatis, in a dining hall of blue velvet, warm wood and green leaves." />
+              </p>
+            </div>
+            <motion.div style={{ scale: imgScale, rotate: imgR, clipPath: clip }} className="relative aspect-[4/5] overflow-hidden shadow-glow">
+              <img src={interior2.url} alt="Aashirwad dining hall with blue sofas and wooden pillars" className="h-full w-full object-cover" />
+            </motion.div>
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-5 py-20 md:grid-cols-4">
+        {[[407, "+", "Reviews"], [100, "%", "Pure Veg"], [150, "+", "Dishes"], [3.6, "★", "Rating"]].map(([n, s, l], i) => (
+          <Reveal key={l as string} delay={i * 0.1} className="rounded-3xl border bg-card p-6 text-center">
+            <div className="text-gradient font-display text-5xl font-bold md:text-6xl"><Counter to={n as number} suffix={s as string} decimals={n === 3.6 ? 1 : 0} /></div>
+            <div className="mt-2 text-sm text-muted-foreground">{l}</div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Specials (horizontal scroll) ---------- */
+const specials = [
+  { n: "Paneer Tikka Dry", p: "₹180", img: tikka },
+  { n: "Shahi Paneer", p: "₹170", img: hero },
+  { n: "Kaju Paneer Makhana", p: "₹220", img: hero },
+  { n: "Dal-Rice-Chapati Thali", p: "Ask at restaurant", img: thali },
+  { n: "Hara Bhara Kabab", p: "₹140", img: tikka },
+  { n: "Gulab Jamun", p: "₹45 · 2pcs", img: jamun },
+];
+export function Specials() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-72%"]);
+  return (
+    <section id="specials" ref={ref} className="relative h-[350vh]">
+      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
+        <div className="mx-auto mb-10 w-full max-w-7xl px-5">
+          <p className={eyebrow}>Signature Specials</p>
+          <h2 className={h2}>Plates worth <span className="text-gradient italic">a pilgrimage.</span></h2>
+        </div>
+        <motion.div style={{ x }} className="flex gap-6 pl-5 md:pl-[max(1.25rem,calc((100vw-80rem)/2+1.25rem))]">
+          {specials.map((s) => (
+            <Tilt key={s.n} className="group relative h-[52vh] w-[75vw] shrink-0 overflow-hidden rounded-3xl border md:w-[30vw]">
+              <img src={s.img} alt={s.n} loading="lazy" data-hover className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110" />
+              <div className="bg-overlay absolute inset-0" />
+              <div className="absolute inset-x-0 bottom-0 p-6">
+                <span className="mb-2 inline-block rounded-full border border-success/50 px-2 py-0.5 text-[10px] font-bold uppercase text-success">Veg</span>
+                <h3 className="font-display text-3xl font-semibold">{s.n}</h3>
+                <p className="mt-1 font-semibold text-primary">{s.p}</p>
+              </div>
+            </Tilt>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Menu ---------- */
+export function Menu() {
+  const [cat, setCat] = useState(menu[0]?.id ?? "");
+  const [q, setQ] = useState("");
+  const items = useMemo(() => {
+    if (q.trim()) return menu.flatMap((c) => c.items.filter((i) => i.name.toLowerCase().includes(q.toLowerCase())));
+    return (menu.find((c) => c.id === cat)?.items ?? []);
+  }, [cat, q]);
+  return (
+    <section id="menu" className="mx-auto max-w-7xl px-5 py-28">
+      <Reveal>
+        <p className={eyebrow}>The Menu</p>
+        <h2 className={h2}>Every dish, <span className="text-gradient italic">100% veg.</span></h2>
+      </Reveal>
+      <div className="glass sticky top-16 z-30 -mx-5 mt-10 border-b px-5 py-4">
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dishes…"
+          className="mb-4 w-full rounded-full border bg-card px-5 py-3 text-sm outline-none focus:border-primary md:w-80" />
+        <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
+          {menu.map((c) => (
+            <button key={c.id} onClick={() => { setCat(c.id); setQ(""); }} className="relative shrink-0 rounded-full px-4 py-2 text-sm">
+              {cat === c.id && !q && <motion.span layoutId="tab" className="bg-gradient-primary absolute inset-0 rounded-full" />}
+              <span className={`relative ${cat === c.id && !q ? "text-primary-foreground font-semibold" : "text-muted-foreground"}`}>{c.title}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <motion.div layout className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <AnimatePresence mode="popLayout">
+          {items.map((it, i) => (
+            <motion.div key={it.name} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0, transition: { delay: i * 0.02 } }} exit={{ opacity: 0, scale: 0.9 }}
+              className="flex items-center justify-between gap-4 rounded-2xl border bg-card p-5 transition hover:-translate-y-1 hover:border-primary hover:shadow-glow">
+              <div>
+                <div className="flex items-center gap-2"><span className="grid h-4 w-4 place-items-center rounded-sm border border-success"><span className="h-2 w-2 rounded-full bg-success" /></span><span className="font-semibold">{it.name}</span></div>
+                {it.note && <span className="mt-2 inline-block rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{it.note}</span>}
+              </div>
+              <span className="shrink-0 font-display text-2xl font-bold text-primary">{it.price}</span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+      {!items.length && <p className="mt-8 text-muted-foreground">No dishes found.</p>}
+    </section>
+  );
+}
+
+/* ---------- Thali exploded view ---------- */
+const thaliItems = ["Sabzi", "Paneer Sabzi", "Raita", "Dal", "Rice", "4 Butter Chapati", "Sweet Dish", "Namkeen", "Papad", "Pickle", "Salad"];
+function Orbit({ label, i, p }: { label: string; i: number; p: ReturnType<typeof useScroll>["scrollYProgress"] }) {
+  const a = (i / thaliItems.length) * Math.PI * 2;
+  const x = useTransform(p, [0.1, 0.6], [0, Math.cos(a) * 42]);
+  const y = useTransform(p, [0.1, 0.6], [0, Math.sin(a) * 42]);
+  const o = useTransform(p, [0.1, 0.4], [0, 1]);
+  return (
+    <motion.span style={{ left: useTransform(x, (v) => `calc(50% + ${v}%)`), top: useTransform(y, (v) => `calc(50% + ${v}%)`), opacity: o }}
+      className="glass absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold md:text-sm">{label}</motion.span>
+  );
+}
+export function Thali() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const rot = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const sc = useTransform(scrollYProgress, [0, 0.6], [1, 0.62]);
+  return (
+    <section ref={ref} className="relative h-[250vh]">
+      <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden px-5">
+        <div className="mb-6 text-center">
+          <p className={eyebrow}>Family Thali</p>
+          <h2 className="font-display text-4xl font-semibold md:text-6xl">One plate. <span className="text-gradient italic">Eleven joys.</span></h2>
+        </div>
+        <div className="relative aspect-square w-[min(88vw,70vh)]">
+          <motion.img src={thali} alt="Family thali" loading="lazy" style={{ rotate: rot, scale: sc }} className="absolute inset-0 h-full w-full rounded-full object-cover shadow-glow" />
+          {thaliItems.map((t, i) => <Orbit key={t} label={t} i={i} p={scrollYProgress} />)}
+        </div>
+        <p className="mt-6 text-center text-sm text-muted-foreground">Lunch Pack: 1 Sez. Veg, Dal, Rice, 3 Chapati · Prices — ask at restaurant</p>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Gallery ---------- */
+export function Gallery() {
+  const photos = [
+    { src: exterior.url, alt: "Aashirwad Restaurant storefront on Navlakha Road" },
+    { src: interior1.url, alt: "Dining hall with blue sofas" },
+    { src: thali, alt: "Thali" },
+    { src: interior2.url, alt: "Dining hall with hanging plants" },
+    { src: tikka, alt: "Paneer tikka" },
+    { src: jamun, alt: "Gulab jamun" },
+  ];
+  const [open, setOpen] = useState<string | null>(null);
+  return (
+    <section id="gallery" className="mx-auto max-w-7xl px-5 py-28">
+      <Reveal><p className={eyebrow}>Ambience</p><h2 className={h2}>Step inside <span className="text-gradient italic">the palace.</span></h2></Reveal>
+      <div className="mt-12 columns-2 gap-4 md:columns-3">
+        {photos.map((p, i) => (
+          <motion.button key={i} onClick={() => setOpen(p.src)} data-hover
+            initial={{ clipPath: "inset(100% 0 0 0)" }} whileInView={{ clipPath: "inset(0% 0 0 0)" }} viewport={{ once: true }}
+            transition={{ duration: 1, delay: (i % 3) * 0.12, ease: [0.76, 0, 0.24, 1] }}
+            className="mb-4 block w-full overflow-hidden rounded-3xl">
+            <motion.img layoutId={p.src} src={p.src} alt={p.alt} loading="lazy" className={`w-full object-cover transition duration-700 hover:scale-105 ${i % 2 ? "aspect-square" : "aspect-[3/4]"}`} />
+          </motion.button>
+        ))}
+      </div>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(null)}
+            className="glass fixed inset-0 z-[80] grid place-items-center p-5">
+            <motion.img layoutId={open} src={open} alt="" className="max-h-[85vh] max-w-full rounded-3xl" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
+
+/* ---------- Reviews ---------- */
+const reviews = [
+  ["Rahul S.", "Shahi paneer was rich and perfectly balanced. Great family place."],
+  ["Priya M.", "Lovely blue interiors and quick service. Thali is value for money."],
+  ["Ankit J.", "Paneer tikka straight from the tandoor — smoky and soft."],
+  ["Neha K.", "Pure veg, clean and calm. Gulab jamun is a must."],
+  ["Vikas T.", "Budget friendly with generous portions. Will come again."],
+]; // Placeholder reviews — edit freely
+export function Reviews() {
+  return (
+    <section id="reviews" className="overflow-hidden py-28">
+      <div className="mx-auto max-w-7xl px-5 text-center">
+        <Reveal>
+          <p className={eyebrow}>Reviews</p>
+          <div className="text-gradient font-display text-8xl font-bold md:text-9xl"><Counter to={3.6} decimals={1} /></div>
+          <div className="mt-2 flex justify-center gap-1 text-3xl">
+            {[0, 1, 2, 3, 4].map((i) => <motion.span key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} transition={{ delay: i * 0.12, type: "spring" }} className={i < 4 ? "text-primary" : "text-muted-foreground"}>★</motion.span>)}
+          </div>
+          <p className="mt-2 text-muted-foreground">from 407 Google reviews</p>
+        </Reveal>
+      </div>
+      <div className="mt-12 flex w-max gap-5 animate-marquee [animation-duration:50s]">
+        {[...reviews, ...reviews].map(([n, t], i) => (
+          <div key={i} className="glass w-80 shrink-0 rounded-3xl border p-6 text-left">
+            <div className="text-primary">★★★★★</div><p className="mt-3">“{t}”</p><p className="mt-4 text-sm text-muted-foreground">— {n}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-10 text-center"><a href={`https://www.google.com/maps/search/${encodeURIComponent(MAP_Q)}`} target="_blank" rel="noreferrer" className={btnGhost}>Review us on Google</a></div>
+    </section>
+  );
+}
+
+/* ---------- Why ---------- */
+export function Why() {
+  const items = [["🌿", "100% Pure Veg", "No egg, no meat — ever."], ["🔥", "Fresh Ingredients", "Cooked to order, every time."], ["👨‍👩‍👧", "Family Friendly", "Spacious, calm, comfortable."], ["₹", "Budget Friendly", "Feasts from ₹1–1,000."]];
+  return (
+    <section className="mx-auto grid max-w-7xl gap-4 px-5 pb-28 sm:grid-cols-2 lg:grid-cols-4">
+      {items.map(([i, t, d], k) => (
+        <Reveal key={t} delay={k * 0.1}>
+          <Tilt className="h-full rounded-3xl border bg-card p-8 transition hover:border-primary hover:shadow-glow">
+            <motion.div whileHover={{ rotate: 12, scale: 1.2 }} className="bg-gradient-primary grid h-14 w-14 place-items-center rounded-2xl text-2xl text-primary-foreground">{i}</motion.div>
+            <h3 className="mt-6 font-display text-3xl font-semibold">{t}</h3><p className="mt-2 text-muted-foreground">{d}</p>
+          </Tilt>
+        </Reveal>
+      ))}
+    </section>
+  );
+}
+
+/* ---------- Contact ---------- */
+export function Contact() {
+  const [sent, setSent] = useState(false);
+  const cards = [
+    ["Address", "8, Navlakha Rd, near Dena Bank Navlakha Branch, Janki Nagar, Indore, MP 452001"],
+    ["Phone", "Call or WhatsApp us"],
+    ["Email", "sharmabhanu517@gmail.com"],
+    ["Hours", "Open daily · 11 AM – 11 PM"],
+  ];
+  return (
+    <section id="contact" className="mx-auto max-w-7xl px-5 py-28">
+      <Reveal><p className={eyebrow}>Visit Us</p><h2 className={h2}>Your table <span className="text-gradient italic">awaits.</span></h2></Reveal>
+      <div className="mt-12 grid gap-6 lg:grid-cols-2">
+        <div className="space-y-4">
+          {cards.map(([t, d], i) => (
+            <Reveal key={t} delay={i * 0.08} className="rounded-3xl border bg-card p-6"><p className="text-xs font-bold uppercase tracking-widest text-primary">{t}</p><p className="mt-2">{d}</p></Reveal>
+          ))}
+          <div className="flex flex-wrap gap-3">
+            <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(MAP_Q)}`} target="_blank" rel="noreferrer" className={btnPrimary}>Get Directions</a>
+            <a href={`tel:${PHONE}`} className={btnGhost}>Call</a>
+            <a href={`https://wa.me/${PHONE.replace("+", "")}`} target="_blank" rel="noreferrer" className={btnGhost}>WhatsApp</a>
+          </div>
+          <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="space-y-3 rounded-3xl border bg-card p-6">
+            <AnimatePresence mode="wait">
+              {sent ? (
+                <motion.div key="ok" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="py-10 text-center">
+                  <div className="bg-gradient-primary mx-auto grid h-16 w-16 place-items-center rounded-full text-2xl text-primary-foreground">✓</div>
+                  <p className="mt-4 font-display text-2xl">Thank you! We'll call you soon.</p>
+                </motion.div>
+              ) : (
+                <motion.div key="f" exit={{ opacity: 0 }} className="space-y-3">
+                  {["Name", "Phone"].map((p) => <input key={p} required placeholder={p} className="w-full rounded-xl border bg-background px-4 py-3 outline-none focus:border-primary" />)}
+                  <textarea placeholder="Message" rows={3} className="w-full rounded-xl border bg-background px-4 py-3 outline-none focus:border-primary" />
+                  <button className={btnPrimary}>Send Message</button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </form>
+        </div>
+        <Reveal className="min-h-[420px] overflow-hidden rounded-3xl border">
+          <iframe title="Map" loading="lazy" className="h-full min-h-[420px] w-full" src={`https://maps.google.com/maps?q=${encodeURIComponent(MAP_Q)}&z=16&output=embed`} />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Footer ---------- */
+export function Footer() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
+  const fill = useTransform(scrollYProgress, [0, 1], ["inset(0 100% 0 0)", "inset(0 0% 0 0)"]);
+  return (
+    <footer ref={ref} className="border-t px-5 pb-28 pt-16 md:pb-10">
+      <div className="relative mx-auto max-w-7xl select-none font-display text-[17vw] font-bold leading-none">
+        <span className="text-outline">AASHIRWAD</span>
+        <motion.span style={{ clipPath: fill }} className="text-gradient absolute inset-0">AASHIRWAD</motion.span>
+      </div>
+      <div className="mx-auto mt-10 flex max-w-7xl flex-wrap justify-between gap-6 text-sm text-muted-foreground">
+        <p>Pure Veg. Pure Royal. Pure Aashirwad.</p>
+        <div className="flex gap-5">{links.map((l) => <a key={l} href={`#${l.toLowerCase()}`} className="hover:text-primary">{l}</a>)}</div>
+        <p>Made with ❤️ in Indore</p>
+      </div>
+    </footer>
+  );
+}
+
+export function MobileBar() {
+  return (
+    <div className="glass fixed inset-x-3 bottom-3 z-40 flex gap-2 rounded-full border p-2 md:hidden">
+      <a href={`tel:${PHONE}`} className={`${btnPrimary} flex-1 justify-center !py-3`}>Call Now</a>
+      <a href={`https://wa.me/${PHONE.replace("+", "")}`} className={`${btnGhost} flex-1 justify-center !py-3`}>WhatsApp</a>
+    </div>
+  );
+}
