@@ -6,6 +6,9 @@ import hero from "@/assets/hero.jpg";
 import tikka from "@/assets/tikka.jpg";
 import thali from "@/assets/thali.jpg";
 import jamun from "@/assets/jamun.jpg";
+import story from "@/assets/story.jpg";
+import kajuMakhana from "@/assets/kaju-makhana.jpg";
+import haraBhara from "@/assets/hara-bhara.jpg";
 import interior1 from "@/assets/img5137.jpg.asset.json";
 import interior2 from "@/assets/img5138.jpg.asset.json";
 import exterior from "@/assets/img5141.jpg.asset.json";
@@ -173,7 +176,7 @@ export function About() {
               </p>
             </div>
             <motion.div style={{ scale: imgScale, rotate: imgR, clipPath: clip }} className="relative aspect-[4/5] overflow-hidden shadow-glow">
-              <img src={interior2.url} alt="ASHIRWAD dining hall with blue sofas and wooden pillars" className="h-full w-full object-cover" />
+              <img src={story} alt="Chef serving paneer curries and naan at ASHIRWAD" className="h-full w-full object-cover" />
             </motion.div>
           </div>
         </div>
@@ -194,9 +197,9 @@ export function About() {
 const specials = [
   { n: "Paneer Tikka Dry", p: "₹180", img: tikka },
   { n: "Shahi Paneer", p: "₹170", img: hero },
-  { n: "Kaju Paneer Makhana", p: "₹220", img: hero },
+  { n: "Kaju Paneer Makhana", p: "₹220", img: kajuMakhana },
   { n: "Dal-Rice-Chapati Thali", p: "Ask at restaurant", img: thali },
-  { n: "Hara Bhara Kabab", p: "₹140", img: tikka },
+  { n: "Hara Bhara Kabab", p: "₹140", img: haraBhara },
   { n: "Gulab Jamun", p: "₹45 · 2pcs", img: jamun },
 ];
 export function Specials() {
