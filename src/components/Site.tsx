@@ -227,11 +227,11 @@ export function Specials() {
 
 /* ---------- Menu ---------- */
 export function Menu() {
-  const [cat, setCat] = useState(menu[0].id);
+  const [cat, setCat] = useState(menu[0]?.id ?? "");
   const [q, setQ] = useState("");
   const items = useMemo(() => {
     if (q.trim()) return menu.flatMap((c) => c.items.filter((i) => i.name.toLowerCase().includes(q.toLowerCase())));
-    return menu.find((c) => c.id === cat)!.items;
+    return (menu.find((c) => c.id === cat)?.items ?? []);
   }, [cat, q]);
   return (
     <section id="menu" className="mx-auto max-w-7xl px-5 py-28">
