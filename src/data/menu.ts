@@ -24,6 +24,6 @@ export const menu: MenuCategory[] = raw.map(([title, s]) => ({
   title,
   items: s.split(";").map((p) => {
     const m = p.trim().match(/^(.*?)\s(₹.*?)(?:\s\((.*)\))?$/)!;
-    return { name: m[1], price: m[2], note: m[3] };
+    return m[3] ? { name: m[1]!, price: m[2]!, note: m[3] } : { name: m[1]!, price: m[2]! };
   }),
 }));
