@@ -182,7 +182,7 @@ export function About() {
         </div>
       </div>
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-5 py-20 md:grid-cols-4">
-        {[[407, "+", "Reviews"], [100, "%", "Pure Veg"], [150, "+", "Dishes"], [3.6, "★", "Rating"]].map(([n, s, l], i) => (
+        {[[407, "+", "Reviews"], [100, "%", "Pure Veg"], [150, "+", "Dishes"], [4.2, "★", "Rating"]].map(([n, s, l], i) => (
           <Reveal key={l as string} delay={i * 0.1} className="rounded-3xl border bg-card p-6 text-center">
             <div className="text-gradient font-display text-5xl font-bold md:text-6xl"><Counter to={n as number} suffix={s as string} decimals={n === 3.6 ? 1 : 0} /></div>
             <div className="mt-2 text-sm text-muted-foreground">{l}</div>
