@@ -1,6 +1,6 @@
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Counter, Embers, Magnetic, Reveal, ScrollWords, SplitText, Tilt } from "./motion";
+import { BlurText, Counter, Embers, Magnetic, Reveal, ScrollWords, SplitText, Tilt } from "./motion";
 import { menu } from "@/data/menu";
 import hero from "@/assets/hero.jpg";
 import tikka from "@/assets/tikka.jpg";
@@ -9,6 +9,10 @@ import jamun from "@/assets/jamun.jpg";
 import story from "@/assets/story.jpg";
 import kajuMakhana from "@/assets/kaju-makhana.jpg";
 import haraBhara from "@/assets/hara-bhara.jpg";
+import tandoor from "@/assets/tandoor.jpg";
+import spices from "@/assets/spices.jpg";
+import naan from "@/assets/naan.jpg";
+import desserts from "@/assets/desserts.jpg";
 import interior1 from "@/assets/img5137.jpg.asset.json";
 import interior2 from "@/assets/img5138.jpg.asset.json";
 import exterior from "@/assets/img5141.jpg.asset.json";
@@ -119,7 +123,7 @@ export function Hero() {
   return (
     <section id="home" ref={ref} className="relative flex min-h-[100svh] items-end overflow-hidden pb-24">
       <motion.img src={hero} alt="Shahi paneer in a brass handi over glowing embers" width={1536} height={1024}
-        style={{ scale, rotate }} className="absolute inset-0 h-full w-full object-cover" />
+        style={{ scale, rotate }} className="animate-kenburns absolute inset-0 h-full w-full object-cover" />
       <div className="bg-overlay absolute inset-0" />
       <Embers />
       <motion.div style={{ y, opacity: op }} className="relative mx-auto w-full max-w-7xl px-5">
@@ -132,7 +136,7 @@ export function Hero() {
           <SplitText text="Restaurant" className="block" delay={2.5} />
         </h1>
         <Reveal delay={2.9}>
-          <p className="mt-6 max-w-md text-lg text-muted-foreground">Pure Veg • North Indian • Indore<br /><em className="font-display text-2xl text-foreground">“Swaad Jo Dil Ko Chhu Jaaye”</em></p>
+          <p className="mt-6 max-w-md text-lg text-muted-foreground">Pure Veg • North Indian • Indore<br /><em className="text-shine font-display text-2xl">“Swaad Jo Dil Ko Chhu Jaaye”</em></p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Magnetic><a href="#menu" className={btnPrimary}>Explore Menu →</a></Magnetic>
             <Magnetic><a href={`tel:${PHONE}`} className={btnGhost}>Call Now</a></Magnetic>
@@ -335,7 +339,7 @@ export function Gallery() {
   const [open, setOpen] = useState<string | null>(null);
   return (
     <section id="gallery" className="mx-auto max-w-7xl px-5 py-28">
-      <Reveal><p className={eyebrow}>Ambience</p><h2 className={h2}>Step inside <span className="text-gradient italic">the palace.</span></h2></Reveal>
+      <Reveal><p className={eyebrow}>Ambience</p><h2 className={h2}><BlurText text="Step inside" /> <span className="text-shine italic">the palace.</span></h2></Reveal>
       <div className="mt-12 columns-2 gap-4 md:columns-3">
         {photos.map((p, i) => (
           <motion.button key={i} onClick={() => setOpen(p.src)} data-hover
@@ -399,8 +403,8 @@ export function Why() {
       {items.map(([i, t, d], k) => (
         <Reveal key={t} delay={k * 0.1}>
           <Tilt className="h-full rounded-3xl border bg-card p-8 transition hover:border-primary hover:shadow-glow">
-            <motion.div whileHover={{ rotate: 12, scale: 1.2 }} className="bg-gradient-primary grid h-14 w-14 place-items-center rounded-2xl text-2xl text-primary-foreground">{i}</motion.div>
-            <h3 className="mt-6 font-display text-3xl font-semibold">{t}</h3><p className="mt-2 text-muted-foreground">{d}</p>
+            <motion.div whileHover={{ rotate: 12, scale: 1.2 }} className="animate-floaty bg-gradient-primary grid h-14 w-14 place-items-center rounded-2xl text-2xl text-primary-foreground">{i}</motion.div>
+            <h3 className="mt-6 font-display text-3xl font-semibold"><BlurText text={t} delay={k * 0.1} /></h3><p className="mt-2 text-muted-foreground">{d}</p>
           </Tilt>
         </Reveal>
       ))}
@@ -481,5 +485,48 @@ export function MobileBar() {
       <a href={`tel:${PHONE}`} className={`${btnPrimary} flex-1 justify-center !py-3`}>Call Now</a>
       <a href={WHATSAPP_URL} className={`${btnGhost} flex-1 justify-center !py-3`}>WhatsApp</a>
     </div>
+  );
+}
+
+/* ---------- Journey: horizontal scroll through the kitchen ---------- */
+const journey = [
+  { img: spices, t: "Hand-picked Spices", d: "Saffron, cardamom and fresh-ground masalas every morning." },
+  { img: tandoor, t: "Fire of the Tandoor", d: "Paneer tikka kissed by real clay-oven flames." },
+  { img: naan, t: "Butter Naan & Dal", d: "Torn warm, dripping ghee, with slow-cooked dal makhani." },
+  { img: desserts, t: "Royal Sweet Endings", d: "Rasmalai, kheer and jalebi to finish like royalty." },
+];
+function JourneyCard({ j, i, p }: { j: (typeof journey)[number]; i: number; p: MotionValue<number> }) {
+  const imgX = useTransform(p, [0, 1], ["-12%", "12%"]);
+  return (
+    <motion.div initial={{ opacity: 0, rotate: i % 2 ? 4 : -4, y: 60 }} whileInView={{ opacity: 1, rotate: 0, y: 0 }} viewport={{ once: true }}
+      transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative h-[65vh] w-[78vw] shrink-0 overflow-hidden rounded-[2rem] shadow-glow md:w-[38vw]">
+      <motion.img src={j.img} alt={j.t} loading="lazy" width={1280} height={1600} style={{ x: imgX, scale: 1.3 }}
+        className="absolute inset-0 h-full w-full object-cover transition duration-1000 group-hover:scale-[1.4]" />
+      <div className="bg-overlay absolute inset-0" />
+      <div className="absolute bottom-0 p-8">
+        <span className="font-display text-6xl text-outline">0{i + 1}</span>
+        <h3 className="mt-2 font-display text-4xl font-semibold"><BlurText text={j.t} /></h3>
+        <p className="mt-2 max-w-xs text-muted-foreground">{j.d}</p>
+      </div>
+    </motion.div>
+  );
+}
+export function Journey() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-62%"]);
+  return (
+    <section ref={ref} className="relative h-[300vh]">
+      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
+        <div className="mx-auto mb-8 w-full max-w-7xl px-5">
+          <p className={eyebrow}>From Our Kitchen</p>
+          <h2 className={h2}><BlurText text="A journey of" /> <span className="text-shine italic">flavour.</span></h2>
+        </div>
+        <motion.div style={{ x }} className="flex gap-6 pl-5 md:pl-[8vw]">
+          {journey.map((j, i) => <JourneyCard key={j.t} j={j} i={i} p={scrollYProgress} />)}
+        </motion.div>
+      </div>
+    </section>
   );
 }
