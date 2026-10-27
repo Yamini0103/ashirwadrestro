@@ -212,7 +212,7 @@ export function Specials() {
       <div className="mx-auto max-w-7xl px-5">
         <div className="mb-10">
           <p className={eyebrow}>Signature Specials</p>
-          <h2 className={h2}>Plates worth <span className="text-gradient italic">a pilgrimage.</span></h2>
+          <h2 className={h2}><BlurText text="Plates worth" /> <span className="text-shine italic">a pilgrimage.</span></h2>
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {specials.map((s) => (
@@ -259,7 +259,7 @@ export function Menu() {
     <section id="menu" className="mx-auto max-w-7xl px-5 py-28">
       <Reveal>
         <p className={eyebrow}>The Menu</p>
-        <h2 className={h2}>Every dish, <span className="text-gradient italic">100% veg.</span></h2>
+        <h2 className={h2}><BlurText text="Every dish," /> <span className="text-shine italic">100% veg.</span></h2>
       </Reveal>
       <div className="glass sticky top-16 z-30 -mx-5 mt-10 border-b px-5 py-4">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dishes…"
@@ -335,6 +335,9 @@ export function Gallery() {
     { src: interior2.url, alt: "Dining hall with hanging plants" },
     { src: tikka, alt: "Paneer tikka" },
     { src: jamun, alt: "Gulab jamun" },
+    { src: tandoor, alt: "Paneer tikka from the tandoor" },
+    { src: desserts, alt: "Rasmalai, kheer and jalebi" },
+    { src: spices, alt: "Fresh Indian spices" },
   ];
   const [open, setOpen] = useState<string | null>(null);
   return (
@@ -423,7 +426,7 @@ export function Contact() {
   ];
   return (
     <section id="contact" className="mx-auto max-w-7xl px-5 py-28">
-      <Reveal><p className={eyebrow}>Visit Us</p><h2 className={h2}>Your table <span className="text-gradient italic">awaits.</span></h2></Reveal>
+      <Reveal><p className={eyebrow}>Visit Us</p><h2 className={h2}><BlurText text="Your table" /> <span className="text-shine italic">awaits.</span></h2></Reveal>
       <div className="mt-12 grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           {cards.map(([t, d], i) => (
