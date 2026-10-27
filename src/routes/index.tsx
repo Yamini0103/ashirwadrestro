@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
         telephone: "+917987827020",
         email: "sharmabhanu517@gmail.com",
         address: { "@type": "PostalAddress", streetAddress: "8, Navlakha Rd, Janki Nagar", addressLocality: "Indore", addressRegion: "MP", postalCode: "452001", addressCountry: "IN" },
-        aggregateRating: { "@type": "AggregateRating", ratingValue: 3.6, reviewCount: 407 },
+        aggregateRating: { "@type": "AggregateRating", ratingValue: 4.2, reviewCount: 407 },
       }),
     }],
   }),

@@ -125,7 +125,7 @@ export function Hero() {
       <motion.div style={{ y, opacity: op }} className="relative mx-auto w-full max-w-7xl px-5">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} className="mb-6 flex flex-wrap gap-3 text-xs">
           <span className="glass flex items-center gap-2 rounded-full border px-4 py-2"><span className="h-2 w-2 animate-pulse rounded-full bg-success" />Open Now</span>
-          <span className="glass rounded-full border px-4 py-2">★ 3.6 · 407 reviews</span>
+          <span className="glass rounded-full border px-4 py-2">★ 4.2 · 407 reviews</span>
         </motion.div>
         <h1 className="font-display text-[15vw] font-bold leading-[0.85] md:text-[9vw]" style={{ perspective: 600 }}>
           <SplitText text="ASHIRWAD" className="block" delay={2.2} />
@@ -182,9 +182,9 @@ export function About() {
         </div>
       </div>
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-5 py-20 md:grid-cols-4">
-        {[[407, "+", "Reviews"], [100, "%", "Pure Veg"], [150, "+", "Dishes"], [3.6, "★", "Rating"]].map(([n, s, l], i) => (
+        {[[407, "+", "Reviews"], [100, "%", "Pure Veg"], [150, "+", "Dishes"], [4.2, "★", "Rating"]].map(([n, s, l], i) => (
           <Reveal key={l as string} delay={i * 0.1} className="rounded-3xl border bg-card p-6 text-center">
-            <div className="text-gradient font-display text-5xl font-bold md:text-6xl"><Counter to={n as number} suffix={s as string} decimals={n === 3.6 ? 1 : 0} /></div>
+            <div className="text-gradient font-display text-5xl font-bold md:text-6xl"><Counter to={n as number} suffix={s as string} decimals={n === 4.2 ? 1 : 0} /></div>
             <div className="mt-2 text-sm text-muted-foreground">{l}</div>
           </Reveal>
         ))}
@@ -372,7 +372,7 @@ export function Reviews() {
       <div className="mx-auto max-w-7xl px-5 text-center">
         <Reveal>
           <p className={eyebrow}>Reviews</p>
-          <div className="text-gradient font-display text-8xl font-bold md:text-9xl"><Counter to={3.6} decimals={1} /></div>
+          <div className="text-gradient font-display text-8xl font-bold md:text-9xl"><Counter to={4.2} decimals={1} /></div>
           <div className="mt-2 flex justify-center gap-1 text-3xl">
             {[0, 1, 2, 3, 4].map((i) => <motion.span key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} transition={{ delay: i * 0.12, type: "spring" }} className={i < 4 ? "text-primary" : "text-muted-foreground"}>★</motion.span>)}
           </div>
