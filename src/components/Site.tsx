@@ -407,7 +407,7 @@ export function Why() {
         <Reveal key={t} delay={k * 0.1}>
           <Tilt className="h-full rounded-3xl border bg-card p-8 transition hover:border-primary hover:shadow-glow">
             <motion.div whileHover={{ rotate: 12, scale: 1.2 }} className="animate-floaty bg-gradient-primary grid h-14 w-14 place-items-center rounded-2xl text-2xl text-primary-foreground">{i}</motion.div>
-            <h3 className="mt-6 font-display text-3xl font-semibold"><BlurText text={t} delay={k * 0.1} /></h3><p className="mt-2 text-muted-foreground">{d}</p>
+            <h3 className="mt-6 font-display text-3xl font-semibold"><BlurText text={t ?? ""} delay={k * 0.1} /></h3><p className="mt-2 text-muted-foreground">{d}</p>
           </Tilt>
         </Reveal>
       ))}
