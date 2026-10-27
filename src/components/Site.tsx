@@ -128,7 +128,7 @@ export function Hero() {
           <span className="glass rounded-full border px-4 py-2">★ 3.6 · 407 reviews</span>
         </motion.div>
         <h1 className="font-display text-[15vw] font-bold leading-[0.85] md:text-[9vw]" style={{ perspective: 600 }}>
-          <SplitText text="ASHIRWAD" className="text-gradient block" delay={2.2} />
+          <SplitText text="ASHIRWAD" className="block" delay={2.2} />
           <SplitText text="Restaurant" className="block" delay={2.5} />
         </h1>
         <Reveal delay={2.9}>
