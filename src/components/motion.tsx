@@ -148,3 +148,18 @@ export function Cursor() {
     </motion.div>
   );
 }
+
+/* Word-by-word blur-in reveal for headings and paragraphs */
+export function BlurText({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) {
+  return (
+    <span className={className}>
+      {text.split(" ").map((w, i) => (
+        <motion.span key={i} className="inline-block whitespace-pre"
+          initial={{ opacity: 0, y: 24, filter: "blur(12px)" }} whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.8, delay: delay + i * 0.06, ease: [0.22, 1, 0.36, 1] }}>
+          {w + " "}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
