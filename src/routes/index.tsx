@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
       type: "application/ld+json",
       children: JSON.stringify({
         "@context": "https://schema.org", "@type": "Restaurant", name: "ASHIRWAD Restaurant", servesCuisine: "North Indian, Vegetarian", priceRange: "₹1–1,000",
-        telephone: "+917987827020",
+        telephone: "+919981401199",
         email: "sharmabhanu517@gmail.com",
         address: { "@type": "PostalAddress", streetAddress: "8, Navlakha Rd, Janki Nagar", addressLocality: "Indore", addressRegion: "MP", postalCode: "452001", addressCountry: "IN" },
         aggregateRating: { "@type": "AggregateRating", ratingValue: 4.2, reviewCount: 407 },
