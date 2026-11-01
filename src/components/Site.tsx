@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BlurText, Counter, Embers, Magnetic, Reveal, SplitText } from "./motion";
+import { BlurText, Counter, Embers, Magnetic, Reveal, SplitText, Tilt } from "./motion";
 import { menu } from "@/data/menu";
 import hero from "@/assets/hero.jpg";
 import tikka from "@/assets/tikka.jpg";
