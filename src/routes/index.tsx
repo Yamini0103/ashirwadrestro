@@ -5,17 +5,17 @@ import { Cursor, ProgressBar, useLenis } from "@/components/motion";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ASHIRWAD Restaurant — Pure Veg North Indian, Indore" },
-      { name: "description", content: "Royal pure-veg North Indian dining on Navlakha Road, Indore. Paneer specials, tandoor, thalis and sweets." },
-      { property: "og:title", content: "ASHIRWAD Restaurant — Pure Veg, Pure Royal" },
-      { property: "og:description", content: "Pure veg North Indian restaurant in Indore. Explore the full menu, specials and visit us." },
-      { property: "og:type", content: "restaurant" },
+      { title: "ASHIRWAD RESTAURANT" },
+      { name: "description", content: "100% pure-veg North Indian dining on Navlakha Road, Indore — slow-cooked paneer gravies, tandoor grills, thalis and mithai. Call 9981401199 to book a table." },
+      { property: "og:title", content: "ASHIRWAD RESTAURANT" },
+      { property: "og:description", content: "Pure-veg North Indian restaurant in Indore. Explore the full menu, signature specials and thalis, then come dine with us." },
+      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
-        "@context": "https://schema.org", "@type": "Restaurant", name: "ASHIRWAD Restaurant", servesCuisine: "North Indian, Vegetarian", priceRange: "₹1–1,000",
+        "@context": "https://schema.org", "@type": "Restaurant", name: "ASHIRWAD RESTAURANT", servesCuisine: "North Indian, Vegetarian", priceRange: "₹1–1,000",
         telephone: "+919981401199",
         email: "sharmabhanu517@gmail.com",
         address: { "@type": "PostalAddress", streetAddress: "8, Navlakha Rd, Janki Nagar", addressLocality: "Indore", addressRegion: "MP", postalCode: "452001", addressCountry: "IN" },
