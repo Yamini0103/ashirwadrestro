@@ -1,6 +1,6 @@
-import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BlurText, Counter, Embers, Magnetic, Reveal, ScrollWords, SplitText, Tilt } from "./motion";
+import { BlurText, Counter, Embers, Magnetic, Reveal, SplitText, Tilt } from "./motion";
 import { menu } from "@/data/menu";
 import hero from "@/assets/hero.jpg";
 import tikka from "@/assets/tikka.jpg";
@@ -120,19 +120,38 @@ export function Hero() {
   const rotate = useTransform(scrollYProgress, [0, 1], [0, 8]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
   const op = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const px = useMotionValue(50), py = useMotionValue(50);
+  const spot = useMotionTemplate`radial-gradient(500px circle at ${px}% ${py}%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 70%)`;
+  const mx = useSpring(useTransform(px, [0, 100], [-25, 25]), { stiffness: 80, damping: 20 });
+  const my = useSpring(useTransform(py, [0, 100], [-25, 25]), { stiffness: 80, damping: 20 });
   return (
-    <section id="home" ref={ref} className="relative flex min-h-[100svh] items-end overflow-hidden pb-24">
+    <section id="home" ref={ref} onPointerMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); px.set(((e.clientX - r.left) / r.width) * 100); py.set(((e.clientY - r.top) / r.height) * 100); }} className="relative flex min-h-[100svh] items-end overflow-hidden pb-24">
       <motion.img src={hero} alt="Shahi paneer in a brass handi over glowing embers" width={1536} height={1024}
         style={{ scale, rotate }} className="animate-kenburns absolute inset-0 h-full w-full object-cover" />
       <div className="bg-overlay absolute inset-0" />
+      <motion.div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: spot }} />
       <Embers />
+      <motion.div aria-hidden initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ delay: 2, duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
+        className="absolute inset-0 origin-top bg-background" />
+      <div aria-hidden className="pointer-events-none absolute right-[6%] top-[18%] hidden h-[420px] w-[420px] lg:block">
+        <motion.svg viewBox="0 0 200 200" className="absolute inset-0 h-full w-full text-primary" animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 30, ease: "linear" }}>
+          <defs><path id="circ" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>
+          <text fontSize="11" letterSpacing="5" fill="currentColor"><textPath href="#circ">PURE VEG • ROYAL TASTE • SINCE INDORE • ASHIRWAD • </textPath></text>
+        </motion.svg>
+        {[{ img: tikka, c: "left-[30%] top-[30%] h-40 w-40", d: 2.6 }, { img: kajuMakhana, c: "left-0 top-[60%] h-28 w-28", d: 2.8 }, { img: jamun, c: "right-0 top-[8%] h-24 w-24", d: 3 }].map((o, i) => (
+          <motion.img key={i} src={o.img} alt="" initial={{ scale: 0, rotate: -90, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }}
+            transition={{ delay: o.d, type: "spring", stiffness: 90, damping: 12 }}
+            style={{ x: mx, y: my, animationDelay: `${i * 0.8}s` }}
+            className={`animate-floaty absolute rounded-full border-2 border-primary object-cover shadow-glow ${o.c}`} />
+        ))}
+      </div>
       <motion.div style={{ y, opacity: op }} className="relative mx-auto w-full max-w-7xl px-5">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} className="mb-6 flex flex-wrap gap-3 text-xs">
           <span className="glass flex items-center gap-2 rounded-full border px-4 py-2"><span className="h-2 w-2 animate-pulse rounded-full bg-success" />Open Now</span>
           <span className="glass rounded-full border px-4 py-2">★ 4.2 · 407 reviews</span>
         </motion.div>
         <h1 className="font-display text-[15vw] font-bold leading-[0.85] md:text-[9vw]" style={{ perspective: 600 }}>
-          <SplitText text="ASHIRWAD" className="block" delay={2.2} />
+          <SplitText text="ASHIRWAD" className="block drop-shadow-[0_0_40px_color-mix(in_oklab,var(--primary)_45%,transparent)]" delay={2.2} />
           <SplitText text="Restaurant" className="block" delay={2.5} />
         </h1>
         <Reveal delay={2.9}>
@@ -162,26 +181,70 @@ export function Marquee() {
 }
 
 /* ---------- About (pinned) ---------- */
+function Story3D() {
+  const x = useMotionValue(0), y = useMotionValue(0);
+  const rx = useSpring(useTransform(y, [-0.5, 0.5], [16, -16]), { stiffness: 150, damping: 18 });
+  const ry = useSpring(useTransform(x, [-0.5, 0.5], [-16, 16]), { stiffness: 150, damping: 18 });
+  const gx = useTransform(x, [-0.5, 0.5], ["0%", "100%"]), gy = useTransform(y, [-0.5, 0.5], ["0%", "100%"]);
+  const glare = useMotionTemplate`radial-gradient(circle at ${gx} ${gy}, color-mix(in oklab, var(--foreground) 35%, transparent), transparent 55%)`;
+  return (
+    <div style={{ perspective: 1100 }} className="relative">
+      <motion.div data-hover style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
+        onPointerMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); x.set((e.clientX - r.left) / r.width - 0.5); y.set((e.clientY - r.top) / r.height - 0.5); }}
+        onPointerLeave={() => { x.set(0); y.set(0); }}
+        className="relative aspect-[4/5] rounded-[2rem]">
+        <div className="absolute inset-0 rounded-[2rem] border border-primary/50" style={{ transform: "translateZ(-60px) scale(1.06)" }} />
+        <div className="absolute inset-0 overflow-hidden rounded-[2rem] shadow-glow" style={{ transform: "translateZ(0)" }}>
+          <img src={story} alt="Chef serving paneer curries and naan at ASHIRWAD" className="h-full w-full object-cover" />
+          <motion.div className="absolute inset-0 mix-blend-overlay" style={{ background: glare }} />
+        </div>
+        <img src={interior2.url} alt="" aria-hidden className="absolute -left-10 bottom-10 h-32 w-44 rounded-2xl border-2 border-primary object-cover shadow-glow md:h-40 md:w-56" style={{ transform: "translateZ(90px)" }} />
+        <div className="glass absolute right-4 top-8 rounded-2xl border px-5 py-3 text-center" style={{ transform: "translateZ(120px)" }}>
+          <div className="text-gradient font-display text-4xl font-bold">4.2★</div>
+          <div className="text-xs text-muted-foreground">407 reviews</div>
+        </div>
+        <div className="glass absolute bottom-6 right-6 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-widest text-success" style={{ transform: "translateZ(70px)" }}>100% Pure Veg</div>
+      </motion.div>
+    </div>
+  );
+}
+function ScrollLetters({ text, progress }: { text: string; progress: MotionValue<number> }) {
+  return <>{text.split(" ").map((w, i, arr) => <ScrollWord key={i} w={w} progress={progress} range={[0.05 + (i / arr.length) * 0.6, 0.05 + ((i + 1) / arr.length) * 0.6]} />)}</>;
+}
+function ScrollWord({ w, progress, range }: { w: string; progress: MotionValue<number>; range: [number, number] }) {
+  return (
+    <span className="mr-[0.25em] inline-block whitespace-nowrap">
+      {w.split("").map((c, j) => <ScrollChar key={j} c={c} progress={progress} range={[range[0] + ((range[1] - range[0]) * j) / w.length, range[0] + ((range[1] - range[0]) * (j + 1)) / w.length]} />)}
+    </span>
+  );
+}
+function ScrollChar({ c, progress, range }: { c: string; progress: MotionValue<number>; range: [number, number] }) {
+  const o = useTransform(progress, range, [0.12, 1]);
+  const yy = useTransform(progress, range, [18, 0]);
+  const b = useTransform(progress, range, ["blur(6px)", "blur(0px)"]);
+  const col = useTransform(progress, [range[0], range[1], range[1] + 0.06], ["var(--foreground)", "var(--primary)", "var(--foreground)"]);
+  return <motion.span style={{ opacity: o, y: yy, filter: b, color: col }} className="inline-block">{c}</motion.span>;
+}
 export function About() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const imgScale = useTransform(scrollYProgress, [0, 1], [0.8, 1.05]);
-  const imgR = useTransform(scrollYProgress, [0, 1], [-6, 4]);
-  const clip = useTransform(scrollYProgress, [0, 0.5], ["inset(20% 20% 20% 20% round 32px)", "inset(0% 0% 0% 0% round 32px)"]);
+  const imgScale = useTransform(scrollYProgress, [0, 0.4], [0.85, 1]);
+  const imgY = useTransform(scrollYProgress, [0, 1], [60, -40]);
   return (
     <section id="about">
       <div ref={ref} className="relative h-[250vh]">
         <div className="sticky top-0 flex min-h-screen items-center">
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 md:grid-cols-2">
+          <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 md:grid-cols-2">
             <div>
-              <p className={eyebrow}>Our Story</p>
-              <p className="font-display text-3xl leading-tight md:text-5xl">
-                <ScrollWords progress={scrollYProgress} text="On Navlakha Road, ASHIRWAD serves Indore royal North Indian vegetarian food — slow-cooked gravies, tandoor-kissed paneer and soft butter chapatis, in a dining hall of blue velvet, warm wood and green leaves." />
+              <p className={eyebrow}><SplitText text="Our Story" /></p>
+              <h3 className="mb-6 font-display text-6xl font-bold italic md:text-8xl" style={{ perspective: 600 }}>
+                <motion.span className="text-shine inline-block" initial={{ rotateX: -90, opacity: 0 }} whileInView={{ rotateX: 0, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1 }}>Since day one</motion.span>
+              </h3>
+              <p className="font-display text-3xl leading-tight md:text-4xl">
+                <ScrollLetters progress={scrollYProgress} text="On Navlakha Road, ASHIRWAD serves Indore royal North Indian vegetarian food — slow-cooked gravies, tandoor-kissed paneer and soft butter chapatis, in a dining hall of blue velvet, warm wood and green leaves." />
               </p>
             </div>
-            <motion.div style={{ scale: imgScale, rotate: imgR, clipPath: clip }} className="relative aspect-[4/5] overflow-hidden shadow-glow">
-              <img src={story} alt="Chef serving paneer curries and naan at ASHIRWAD" className="h-full w-full object-cover" />
-            </motion.div>
+            <motion.div style={{ scale: imgScale, y: imgY }}><Story3D /></motion.div>
           </div>
         </div>
       </div>
@@ -206,6 +269,21 @@ const specials = [
   { n: "Hara Bhara Kabab", p: "₹140", img: haraBhara },
   { n: "Gulab Jamun", p: "₹45 · 2pcs", img: jamun },
 ];
+function SpecialTilt({ children }: { children: React.ReactNode }) {
+  const x = useMotionValue(0), y = useMotionValue(0);
+  const rx = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { stiffness: 200, damping: 20 });
+  const ry = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { stiffness: 200, damping: 20 });
+  const gx = useTransform(x, [-0.5, 0.5], ["0%", "100%"]), gy = useTransform(y, [-0.5, 0.5], ["0%", "100%"]);
+  const glare = useMotionTemplate`radial-gradient(circle at ${gx} ${gy}, color-mix(in oklab, var(--primary) 30%, transparent), transparent 60%)`;
+  return (
+    <motion.div style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }} whileHover={{ y: -8 }}
+      onPointerMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); x.set((e.clientX - r.left) / r.width - 0.5); y.set((e.clientY - r.top) / r.height - 0.5); }}
+      onPointerLeave={() => { x.set(0); y.set(0); }} className="group/t relative rounded-lg hover:shadow-glow">
+      {children}
+      <motion.div aria-hidden className="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover/t:opacity-100" style={{ background: glare }} />
+    </motion.div>
+  );
+}
 export function Specials() {
   return (
     <section id="specials" className="scroll-mt-24 py-24">
@@ -215,8 +293,11 @@ export function Specials() {
           <h2 className={h2}><BlurText text="Plates worth" /> <span className="text-shine italic">a pilgrimage.</span></h2>
         </div>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {specials.map((s) => (
+          {specials.map((s, idx) => (
             <Dialog key={s.n}>
+              <motion.div initial={{ opacity: 0, y: 60, rotateX: -25 }} whileInView={{ opacity: 1, y: 0, rotateX: 0 }} viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.9, delay: (idx % 3) * 0.12, ease: [0.22, 1, 0.36, 1] }} style={{ perspective: 900 }}>
+              <SpecialTilt>
               <DialogTrigger asChild>
                 <Button variant="ghost" aria-label={`Open ${s.n}`} className="group h-auto w-full flex-col items-stretch gap-0 overflow-hidden whitespace-normal rounded-lg border bg-card p-0 text-left text-foreground transition hover:border-primary focus-visible:ring-primary">
                   <span className="block aspect-[4/3] w-full overflow-hidden">
@@ -232,6 +313,8 @@ export function Specials() {
                   </span>
                 </Button>
               </DialogTrigger>
+              </SpecialTilt>
+              </motion.div>
               <DialogContent data-lenis-prevent className="max-h-[85svh] w-[calc(100%-2rem)] overflow-y-auto rounded-lg border-primary/40 p-5">
                 <DialogTitle className="pr-8 font-display text-3xl leading-tight">{s.n}</DialogTitle>
                 <DialogDescription>Signature Special · Pure Veg</DialogDescription>
@@ -498,14 +581,13 @@ const journey = [
   { img: naan, t: "Butter Naan & Dal", d: "Torn warm, dripping ghee, with slow-cooked dal makhani." },
   { img: desserts, t: "Royal Sweet Endings", d: "Rasmalai, kheer and jalebi to finish like royalty." },
 ];
-function JourneyCard({ j, i, p }: { j: (typeof journey)[number]; i: number; p: MotionValue<number> }) {
-  const imgX = useTransform(p, [0, 1], ["-12%", "12%"]);
+function JourneyCard({ j, i }: { j: (typeof journey)[number]; i: number }) {
   return (
-    <motion.div initial={{ opacity: 0, rotate: i % 2 ? 4 : -4, y: 60 }} whileInView={{ opacity: 1, rotate: 0, y: 0 }} viewport={{ once: true }}
+    <motion.div initial={{ opacity: 0, scale: 0.9, y: 80 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative h-[65vh] w-[78vw] shrink-0 overflow-hidden rounded-[2rem] shadow-glow md:w-[38vw]">
-      <motion.img src={j.img} alt={j.t} loading="lazy" width={1280} height={1600} style={{ x: imgX, scale: 1.3 }}
-        className="absolute inset-0 h-full w-full object-cover transition duration-1000 group-hover:scale-[1.4]" />
+      className="group relative h-[60vh] overflow-hidden rounded-[2rem] shadow-glow">
+      <img src={j.img} alt={j.t} loading="lazy" width={1280} height={1600}
+        className="animate-kenburns absolute inset-0 h-full w-full object-cover transition duration-1000 group-hover:scale-110" />
       <div className="bg-overlay absolute inset-0" />
       <div className="absolute bottom-0 p-8">
         <span className="font-display text-6xl text-outline">0{i + 1}</span>
@@ -516,18 +598,22 @@ function JourneyCard({ j, i, p }: { j: (typeof journey)[number]; i: number; p: M
   );
 }
 export function Journey() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-62%"]);
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const up = useTransform(scrollYProgress, [0, 1], [120, -160]);
+  const down = useTransform(scrollYProgress, [0, 1], [-160, 120]);
   return (
-    <section ref={ref} className="relative h-[300vh]">
-      <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-        <div className="mx-auto mb-8 w-full max-w-7xl px-5">
-          <p className={eyebrow}>From Our Kitchen</p>
-          <h2 className={h2}><BlurText text="A journey of" /> <span className="text-shine italic">flavour.</span></h2>
-        </div>
-        <motion.div style={{ x }} className="flex gap-6 pl-5 md:pl-[8vw]">
-          {journey.map((j, i) => <JourneyCard key={j.t} j={j} i={i} p={scrollYProgress} />)}
+    <section ref={ref} className="relative overflow-hidden py-28">
+      <div className="mx-auto mb-14 w-full max-w-7xl px-5">
+        <p className={eyebrow}>From Our Kitchen</p>
+        <h2 className={h2}><BlurText text="A journey of" /> <span className="text-shine italic">flavour.</span></h2>
+      </div>
+      <div className="mx-auto grid max-w-7xl gap-6 px-5 md:grid-cols-2">
+        <motion.div style={{ y: up }} className="flex flex-col gap-6">
+          {[0, 2].map((k) => <JourneyCard key={k} j={journey[k]!} i={k} />)}
+        </motion.div>
+        <motion.div style={{ y: down }} className="flex flex-col gap-6 md:pt-32">
+          {[1, 3].map((k) => <JourneyCard key={k} j={journey[k]!} i={k} />)}
         </motion.div>
       </div>
     </section>
