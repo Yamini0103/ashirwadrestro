@@ -198,8 +198,8 @@ function Story3D() {
           <img src={story} alt="Chef serving paneer curries and naan at ASHIRWAD" className="h-full w-full object-cover" />
           <motion.div className="absolute inset-0 mix-blend-overlay" style={{ background: glare }} />
         </div>
-        <img src={interior2} alt="" aria-hidden className="absolute -left-10 bottom-10 h-32 w-44 rounded-2xl border-2 border-primary object-cover shadow-glow md:h-40 md:w-56" style={{ transform: "translateZ(90px)" }} />
-        <div className="glass absolute -right-4 top-8 rounded-2xl border px-5 py-3 text-center" style={{ transform: "translateZ(120px)" }}>
+        <img src={interior2.url} alt="" aria-hidden className="absolute -left-10 bottom-10 h-32 w-44 rounded-2xl border-2 border-primary object-cover shadow-glow md:h-40 md:w-56" style={{ transform: "translateZ(90px)" }} />
+        <div className="glass absolute right-4 top-8 rounded-2xl border px-5 py-3 text-center" style={{ transform: "translateZ(120px)" }}>
           <div className="text-gradient font-display text-4xl font-bold">4.2★</div>
           <div className="text-xs text-muted-foreground">407 reviews</div>
         </div>
