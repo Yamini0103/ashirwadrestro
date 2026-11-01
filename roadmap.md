@@ -4,3 +4,4 @@
 - [x] Recreate Signature Specials so every option can be opened.
 - [x] Verify all six specials and contact links.- [x] Replace story image and duplicate special dish images.
 - [x] Make hero ASHIRWAD title white.
+- [x] Remove platform branding from title, meta tags, favicon, README and comments; set title to ASHIRWAD RESTAURANT with the restaurant's own description.
