@@ -13,9 +13,9 @@ import tandoor from "@/assets/tandoor.jpg";
 import spices from "@/assets/spices.jpg";
 import naan from "@/assets/naan.jpg";
 import desserts from "@/assets/desserts.jpg";
-import interior1 from "@/assets/img5137.jpg.asset.json";
-import interior2 from "@/assets/img5138.jpg.asset.json";
-import exterior from "@/assets/img5141.jpg.asset.json";
+import interior1 from "@/assets/dining-hall-blue-sofas.jpg";
+import interior2 from "@/assets/dining-hall-plants.jpg";
+import exterior from "@/assets/restaurant-exterior.jpg";
 import { PHONE, PHONE_DISPLAY, WHATSAPP_URL } from "@/data/restaurant";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -198,7 +198,7 @@ function Story3D() {
           <img src={story} alt="Chef serving paneer curries and naan at ASHIRWAD" className="h-full w-full object-cover" />
           <motion.div className="absolute inset-0 mix-blend-overlay" style={{ background: glare }} />
         </div>
-        <img src={interior2.url} alt="" aria-hidden className="absolute -left-10 bottom-10 h-32 w-44 rounded-2xl border-2 border-primary object-cover shadow-glow md:h-40 md:w-56" style={{ transform: "translateZ(90px)" }} />
+        <img src={interior2} alt="" aria-hidden className="absolute -left-10 bottom-10 h-32 w-44 rounded-2xl border-2 border-primary object-cover shadow-glow md:h-40 md:w-56" style={{ transform: "translateZ(90px)" }} />
         <div className="glass absolute right-4 top-8 rounded-2xl border px-5 py-3 text-center" style={{ transform: "translateZ(120px)" }}>
           <div className="text-gradient font-display text-4xl font-bold">4.2★</div>
           <div className="text-xs text-muted-foreground">407 reviews</div>
@@ -412,10 +412,10 @@ export function Thali() {
 /* ---------- Gallery ---------- */
 export function Gallery() {
   const photos = [
-    { src: exterior.url, alt: "ASHIRWAD Restaurant storefront on Navlakha Road" },
-    { src: interior1.url, alt: "Dining hall with blue sofas" },
+    { src: exterior, alt: "ASHIRWAD Restaurant storefront on Navlakha Road" },
+    { src: interior1, alt: "Dining hall with blue sofas" },
     { src: thali, alt: "Thali" },
-    { src: interior2.url, alt: "Dining hall with hanging plants" },
+    { src: interior2, alt: "Dining hall with hanging plants" },
     { src: tikka, alt: "Paneer tikka" },
     { src: jamun, alt: "Gulab jamun" },
     { src: tandoor, alt: "Paneer tikka from the tandoor" },
